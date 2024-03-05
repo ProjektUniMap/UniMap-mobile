@@ -4,6 +4,7 @@ import Mapbox, { MapView, Camera } from '@rnmapbox/maps';
 import MapSource from './components/MapSource';
 import MapGeoJSON from './assets/maps/labtekv.json';
 import { FeatureCollection, Feature } from 'geojson';
+import LevelButtons from './components/LevelButtons';
 
 const App = () => {
 	const EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
@@ -11,7 +12,7 @@ const App = () => {
 
 	const map = useRef<MapView>(null);
 	const [levels, setLevels] = useState<string[]>([]);
-	const [selectedLevel, setSelectedLevel] = useState(2);
+	const [selectedLevel, setSelectedLevel] = useState('2');
 	const [shape, setShape] = useState<FeatureCollection>(
 		MapGeoJSON as unknown as FeatureCollection
 	);
@@ -52,6 +53,13 @@ const App = () => {
 					/>
 				</MapView>
 			</View>
+			<View style={styles.levelButtons}>
+				<LevelButtons
+					levels={levels}
+					selectedLevel={selectedLevel}
+					setSelectedLevel={setSelectedLevel}
+				/>
+			</View>
 		</View>
 	);
 };
@@ -70,5 +78,10 @@ const styles = StyleSheet.create({
 	},
 	map: {
 		flex: 1,
+	},
+	levelButtons: {
+		position: 'absolute',
+		bottom: 10,
+		right: 10,
 	},
 });
