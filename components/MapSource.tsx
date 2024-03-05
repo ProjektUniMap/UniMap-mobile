@@ -3,7 +3,7 @@ import Mapbox, { ShapeSource, SymbolLayer, LineLayer, MapView, FillLayer } from 
 import { FeatureCollection, Feature } from 'geojson';
 
 interface MapSourceProps {
-	selectedLevel: number;
+	selectedLevel: string;
 	minZoomLevel: number;
 	shape: FeatureCollection;
 }
@@ -22,13 +22,13 @@ const MapSource = ({ selectedLevel, minZoomLevel, shape }: MapSourceProps) => {
 						'#FEFEE2',
 					],
 				}}
-				filter={['==', 'level', selectedLevel.toString()]}
+				filter={['==', 'level', selectedLevel]}
 				minZoomLevel={minZoomLevel}
 			/>
 			<LineLayer
 				id="indoor-line"
 				style={{ lineColor: '#000' }}
-				filter={['==', 'level', selectedLevel.toString()]}
+				filter={['==', 'level', selectedLevel]}
 				minZoomLevel={minZoomLevel}
 			/>
 			<SymbolLayer
@@ -38,7 +38,7 @@ const MapSource = ({ selectedLevel, minZoomLevel, shape }: MapSourceProps) => {
 					textField: ['get', 'name'],
 					textSize: 8,
 				}}
-				filter={['==', 'level', selectedLevel.toString()]}
+				filter={['==', 'level', selectedLevel]}
 				minZoomLevel={minZoomLevel}
 			/>
 		</ShapeSource>
