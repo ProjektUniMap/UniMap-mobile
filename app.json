@@ -16,12 +16,6 @@
 			"supportsTablet": true
 		},
 		"android": {
-			"splash": {
-				"image": "./assets/images/splash.png",
-				"resizeMode": "cover",
-				"backgroundColor": "#ffffff"
-			},
-			"icon": "./assets/images/icon.png",
 			"package": "com.unimap.unimap"
 		},
 		"web": {

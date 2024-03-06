@@ -19,21 +19,19 @@ const App = () => {
 	const minZoomLevel = 18.5;
 
 	const getAvailableLevels = async (state: Mapbox.MapState) => {
-		if (state.properties.zoom >= minZoomLevel) {
-			const features = (await map.current?.querySourceFeatures('indoor'))?.features;
-			const currentLevels: string[] = [];
+		const features = (await map.current?.querySourceFeatures('indoor'))?.features;
+		const currentLevels: string[] = [];
 
-			features?.forEach((feature: Feature) => {
-				if (
-					!currentLevels.includes(feature.properties?.level) &&
-					feature.properties?.level !== undefined
-				) {
-					currentLevels.push(feature.properties?.level);
-				}
-			});
+		features?.forEach((feature: Feature) => {
+			if (
+				!currentLevels.includes(feature.properties?.level) &&
+				feature.properties?.level !== undefined
+			) {
+				currentLevels.push(feature.properties?.level);
+			}
+		});
 
-			setLevels(currentLevels);
-		}
+		setLevels(currentLevels);
 	};
 
 	return (
@@ -53,13 +51,15 @@ const App = () => {
 					/>
 				</MapView>
 			</View>
-			<View style={styles.levelButtons}>
-				<LevelButtons
-					levels={levels}
-					selectedLevel={selectedLevel}
-					setSelectedLevel={setSelectedLevel}
-				/>
-			</View>
+			{levels.length > 0 && (
+				<View style={styles.levelButtons}>
+					<LevelButtons
+						levels={levels}
+						selectedLevel={selectedLevel}
+						setSelectedLevel={setSelectedLevel}
+					/>
+				</View>
+			)}
 		</View>
 	);
 };
