@@ -3,12 +3,19 @@ import { StyleSheet, View } from 'react-native';
 import Mapbox, { MapView, Camera } from '@rnmapbox/maps';
 import MapSource from './components/MapSource';
 import MapGeoJSON from './assets/maps/labtekv.json';
+import LabtekVIIIGeoJSON from './assets/maps/labtekviii.json';
 import { FeatureCollection, Feature } from 'geojson';
 import LevelButtons from './components/LevelButtons';
 
 const App = () => {
 	const EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
 	Mapbox.setAccessToken(EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN);
+
+	// MapGeoJSON first just contains the GeoJSON from labtekv.json
+	// Push all available GeoJSON features into MapGeoJSON
+	for (const feature of LabtekVIIIGeoJSON.features) {
+		MapGeoJSON.features.push(feature);
+	}
 
 	const map = useRef<MapView>(null);
 	const [levels, setLevels] = useState<string[]>([]);
