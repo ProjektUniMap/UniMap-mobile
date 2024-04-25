@@ -1,0 +1,14 @@
+{
+	"build": {
+		"production": {
+			"env": {
+				"EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "sk.eyJ1IjoibW9udGFpbiIsImEiOiJjbHQ0YWU2Z3UwMWFnMm5rc2k1OW4ydXk1In0.4LH-1rfifvg9OjeEGrMGsg"
+			}
+		},
+		"test": {
+			"env": {
+				"EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN": "sk.eyJ1IjoibW9udGFpbiIsImEiOiJjbHQ0YWU2Z3UwMWFnMm5rc2k1OW4ydXk1In0.4LH-1rfifvg9OjeEGrMGsg"
+			}
+		}
+	}
+}
