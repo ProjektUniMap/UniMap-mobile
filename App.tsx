@@ -6,6 +6,7 @@ import MapGeoJSON from './assets/maps/labtekv.json';
 import LabtekVIIIGeoJSON from './assets/maps/labtekviii.json';
 import { FeatureCollection, Feature } from 'geojson';
 import LevelButtons from './components/LevelButtons';
+import WelcomePage from './pages/WelcomePage';
 
 const App = () => {
 	const EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
@@ -44,7 +45,8 @@ const App = () => {
 	return (
 		<View style={styles.page}>
 			<View style={styles.container}>
-				<MapView style={styles.map} ref={map} onMapIdle={getAvailableLevels}>
+				<WelcomePage />
+				{/* <MapView style={styles.map} ref={map} onMapIdle={getAvailableLevels}>
 					<Camera
 						zoomLevel={19}
 						pitch={20}
@@ -56,9 +58,9 @@ const App = () => {
 						minZoomLevel={minZoomLevel}
 						shape={shape}
 					/>
-				</MapView>
+				</MapView> */}
 			</View>
-			{levels.length > 0 && (
+			{/* {levels.length > 0 && (
 				<View style={styles.levelButtons}>
 					<LevelButtons
 						levels={levels}
@@ -66,7 +68,7 @@ const App = () => {
 						setSelectedLevel={setSelectedLevel}
 					/>
 				</View>
-			)}
+			)} */}
 		</View>
 	);
 };
