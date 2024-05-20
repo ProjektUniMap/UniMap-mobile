@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo-google-fonts/dev": "^0.2.3",
     "@rnmapbox/maps": "^10.1.16",
     "expo": "~50.0.8",
     "expo-status-bar": "~1.11.1",
