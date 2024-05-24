@@ -19,8 +19,13 @@ import {
 } from '../utils/constant';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTogglePasswordVisibility } from '../utils/useTogglePasswordVisibility';
+import { NavigationProp } from '@react-navigation/native';
 
-const SignUpPage = () => {
+type Props = {
+  navigation: NavigationProp<any>;
+}
+
+const SignUpPage = ({navigation}: Props) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -42,7 +47,7 @@ const SignUpPage = () => {
           <View
             style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
           >
-            <Text style={[kJSMed, { marginTop: 120, marginBottom: 36 }]}>
+            <Text style={[kJSMed, { marginTop: 64, marginBottom: 36 }]}>
               Let's Get Started!
             </Text>
           </View>
@@ -132,7 +137,7 @@ const SignUpPage = () => {
           </View>
           <Pressable
             style={[styles.button, { marginTop: 24, marginBottom: 24 }]}
-            onPress={() => {}}
+            onPress={() => navigation.navigate('Map')}
           >
             <Text style={[kB3, { color: 'white' }]}>Sign Up</Text>
           </Pressable>
