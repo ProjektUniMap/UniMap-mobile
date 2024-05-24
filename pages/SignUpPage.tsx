@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -7,6 +7,7 @@ import {
   Text,
   TextInput,
   Pressable,
+  Alert,
 } from 'react-native';
 import {
   darkBlue,
@@ -20,16 +21,18 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTogglePasswordVisibility } from '../utils/useTogglePasswordVisibility';
 import { NavigationProp } from '@react-navigation/native';
+import { supabase } from './../utils/supabase';
 
 type Props = {
   navigation: NavigationProp<any>;
-}
+};
 
-const SignUpPage = ({navigation}: Props) => {
+const SignUpPage = ({ navigation }: Props) => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [buttonDisabled, setButtonDisabled] = useState(true);
   const {
     passwordVisibility,
     eyeIcon: passwordEyeIcon,
@@ -40,6 +43,37 @@ const SignUpPage = ({navigation}: Props) => {
     eyeIcon: confirmPasswordEyeIcon,
     handlePasswordVisibility: handleConfirmPasswordVisibility,
   } = useTogglePasswordVisibility();
+
+  useEffect(() => {
+    if (
+      fullName &&
+      email &&
+      password &&
+      confirmPassword &&
+      password === confirmPassword
+    ) {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [fullName, email, password, confirmPassword]);
+
+  async function signUpWithEmail() {
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    });
+
+    if (error) Alert.alert(error.message);
+    if (!session)
+      Alert.alert('Please check your inbox for email verification!');
+
+    navigation.navigate('Map');
+  }
+
   return (
     <SafeAreaView>
       <ScrollView>
@@ -137,7 +171,8 @@ const SignUpPage = ({navigation}: Props) => {
           </View>
           <Pressable
             style={[styles.button, { marginTop: 24, marginBottom: 24 }]}
-            onPress={() => navigation.navigate('Map')}
+            disabled={buttonDisabled}
+            onPress={() => signUpWithEmail()}
           >
             <Text style={[kB3, { color: 'white' }]}>Sign Up</Text>
           </Pressable>

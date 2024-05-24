@@ -13,40 +13,40 @@ import { NavigationProp } from '@react-navigation/native';
 
 type Props = {
   navigation: NavigationProp<any>;
-}
+};
 
-const WelcomePage = ({navigation}: Props) => {
- return (
-   <SafeAreaView>
-     <ScrollView>
-       <View style={styles.container}>
-         <Image
-           source={require('../assets/images/welcome.png')}
-           style={{ marginTop: 155, marginBottom: 54 }}
-         />
-         <Text style={[kJSReg, { marginBottom: 24 }]}>Welcome to UniMap</Text>
-         <Text style={[kR1, { marginBottom: 58 }]}>
-           Finding you way, one click away
-         </Text>
-         <Pressable
-           style={[styles.button, { marginBottom: 16 }]}
-           onPress={() => navigation.navigate('LogIn')}
-         >
-           <Text style={[kB3, { color: 'white' }]}>Log In</Text>
-         </Pressable>
-         <Pressable
-           style={[
-             styles.button,
-             { backgroundColor: 'white', marginBottom: 191 },
-           ]}
-           onPress={() => navigation.navigate('SignUp')}
-         >
-           <Text style={[kB3, { color: defaultBlue }]}>Sign Up</Text>
-         </Pressable>
-       </View>
-     </ScrollView>
-   </SafeAreaView>
- );
+const WelcomePage = ({ navigation }: Props) => {
+  return (
+    <SafeAreaView>
+      <ScrollView>
+        <View style={styles.container}>
+          <Image
+            source={require('../assets/images/welcome.png')}
+            style={{ marginTop: 155, marginBottom: 54 }}
+          />
+          <Text style={[kJSReg, { marginBottom: 24 }]}>Welcome to UniMap</Text>
+          <Text style={[kR1, { marginBottom: 58 }]}>
+            Finding you way, one click away
+          </Text>
+          <Pressable
+            style={[styles.button, { marginBottom: 16 }]}
+            onPress={() => navigation.navigate('LogIn')}
+          >
+            <Text style={[kB3, { color: 'white' }]}>Log In</Text>
+          </Pressable>
+          <Pressable
+            style={[
+              styles.button,
+              { backgroundColor: 'white', marginBottom: 191 },
+            ]}
+            onPress={() => navigation.navigate('SignUp')}
+          >
+            <Text style={[kB3, { color: defaultBlue }]}>Sign Up</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
 };
 const styles = StyleSheet.create({
   container: {
