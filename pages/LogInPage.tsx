@@ -27,11 +27,9 @@ type Props = {
   navigation: NavigationProp<any>;
 };
 
-const SignUpPage = ({ navigation }: Props) => {
-  const [fullName, setFullName] = useState('');
+const LogInPage = ({ navigation }: Props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const {
@@ -39,45 +37,31 @@ const SignUpPage = ({ navigation }: Props) => {
     eyeIcon: passwordEyeIcon,
     handlePasswordVisibility,
   } = useTogglePasswordVisibility();
-  const {
-    passwordVisibility: confirmPasswordVisibility,
-    eyeIcon: confirmPasswordEyeIcon,
-    handlePasswordVisibility: handleConfirmPasswordVisibility,
-  } = useTogglePasswordVisibility();
 
   useEffect(() => {
-    if (
-      fullName &&
-      email &&
-      password &&
-      confirmPassword &&
-      password === confirmPassword &&
-      !loading
-    ) {
+    if (email && password && !loading) {
       setButtonDisabled(false);
     } else {
       setButtonDisabled(true);
     }
-  }, [fullName, email, password, confirmPassword]);
+  }, [email, password, loading]);
 
-  async function signUpWithEmail() {
+  async function signInWithEmail() {
     setLoading(true);
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
 
     if (error) Alert.alert(error.message);
-    if (!session) {
-      Alert.alert('Please check your inbox for email verification!');
+    else {
       navigation.reset({
         index: 0,
         routes: [{ name: 'Map' }],
       });
+      //   navigation.navigate('Map');
     }
+    setLoading(false);
   }
 
   return (
@@ -88,25 +72,10 @@ const SignUpPage = ({ navigation }: Props) => {
             style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
           >
             <Text style={[kJSMed, { marginTop: 64, marginBottom: 36 }]}>
-              Let's Get Started!
+              Welcome back!!
             </Text>
           </View>
-          <Text style={styles.inputLabel}>
-            Full Name
-            <Text style={styles.requiredAsterisk}> *</Text>
-          </Text>
-          <TextInput
-            style={[
-              styles.inputContainer,
-              fullName ? styles.inputFieldFilled : null,
-            ]}
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="default"
-            placeholder="Enter your full name"
-            value={fullName}
-            onChangeText={setFullName}
-          />
+
           <Text style={styles.inputLabel}>
             E-mail
             <Text style={styles.requiredAsterisk}> *</Text>
@@ -149,36 +118,10 @@ const SignUpPage = ({ navigation }: Props) => {
               />
             </Pressable>
           </View>
-          <Text style={styles.inputLabel}>
-            Confirm Password
-            <Text style={styles.requiredAsterisk}> *</Text>
-          </Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={[
-                styles.inputField,
-                confirmPassword ? styles.inputFieldFilled : null,
-              ]}
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="default"
-              placeholder="Enter the same password"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry={confirmPasswordVisibility}
-            />
-            <Pressable onPress={handleConfirmPasswordVisibility}>
-              <MaterialCommunityIcons
-                name={confirmPasswordEyeIcon}
-                size={22}
-                color={darkBlue}
-              />
-            </Pressable>
-          </View>
           <Pressable
             style={[styles.button, { marginTop: 24, marginBottom: 24 }]}
             disabled={buttonDisabled}
-            onPress={() => signUpWithEmail()}
+            onPress={() => signInWithEmail()}
           >
             <Text style={[kB3, { color: 'white' }]}>Sign Up</Text>
           </Pressable>
@@ -285,4 +228,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignUpPage;
+export default LogInPage;

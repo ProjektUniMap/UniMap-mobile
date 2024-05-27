@@ -35,10 +35,7 @@ const WelcomePage = ({ navigation }: Props) => {
             <Text style={[kB3, { color: 'white' }]}>Log In</Text>
           </Pressable>
           <Pressable
-            style={[
-              styles.button,
-              { backgroundColor: 'white', marginBottom: 191 },
-            ]}
+            style={[styles.button, { backgroundColor: 'white' }]}
             onPress={() => navigation.navigate('SignUp')}
           >
             <Text style={[kB3, { color: defaultBlue }]}>Sign Up</Text>
@@ -53,7 +50,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 26,
+    // padding: 26,
   },
 
   button: {
