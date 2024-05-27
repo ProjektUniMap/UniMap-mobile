@@ -12,6 +12,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           .EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN as string,
       },
     ],
+    'expo-secure-store',
   ],
   extra: {
     eas: {
