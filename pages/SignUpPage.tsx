@@ -58,7 +58,7 @@ const SignUpPage = ({ navigation }: Props) => {
     } else {
       setButtonDisabled(true);
     }
-  }, [fullName, email, password, confirmPassword]);
+  }, [fullName, email, password, confirmPassword, loading]);
 
   async function signUpWithEmail() {
     setLoading(true);
@@ -68,6 +68,11 @@ const SignUpPage = ({ navigation }: Props) => {
     } = await supabase.auth.signUp({
       email: email,
       password: password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
     });
 
     if (error) Alert.alert(error.message);
