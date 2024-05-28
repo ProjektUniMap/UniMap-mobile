@@ -2,8 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import Mapbox, { MapView, Camera } from '@rnmapbox/maps';
 import MapSource from './../components/MapSource';
-import MapGeoJSON from './../assets/maps/labtekv.json';
-import LabtekVIIIGeoJSON from './../assets/maps/labtekviii.json';
 import { FeatureCollection, Feature } from 'geojson';
 import LevelButtons from './../components/LevelButtons';
 import { supabase } from '../lib/supabase';
@@ -26,55 +24,78 @@ const MapPage = () => {
     });
   }, []);
 
-  // MapGeoJSON first just contains the GeoJSON from labtekv.json
-  // Push all available GeoJSON features into MapGeoJSON
-  for (const feature of LabtekVIIIGeoJSON.features) {
-    MapGeoJSON.features.push(feature);
-  }
-
   const map = useRef<MapView>(null);
+  const [mapState, setMapState] = useState<Mapbox.MapState | null>(null);
   const [levels, setLevels] = useState<string[]>([]);
   const [buildingFetchLoading, setBuildingFetchLoading] = useState(false);
   const [buildings, setBuildings] = useState<Array<Number>>([]);
   const [selectedLevel, setSelectedLevel] = useState('2');
-  const [shape, setShape] = useState<FeatureCollection>(
-    MapGeoJSON as unknown as FeatureCollection,
-  );
+  const [shape, setShape] = useState<FeatureCollection | null>(null);
   const minZoomLevel = 18.5;
 
+  // Fetch rooms GeoJSON everytime building is changed
+  useEffect(() => {
+    const fetchMapGeoJSON = async () => {
+      const { data, error } = await supabase.rpc(
+        'export_geojson_by_building_ids',
+        {
+          building_ids: buildings,
+        },
+      );
+      console.log(buildings, data);
+      if (error) {
+        console.error(error);
+      } else if (data && data[0]['j']['features']) {
+        setShape(data[0]['j'] as unknown as FeatureCollection);
+      }
+    };
+
+    if (buildings.length > 0) {
+      fetchMapGeoJSON();
+    } else {
+      setShape(null);
+    }
+  }, [buildings]);
+
   const fetchBuildingInScreen = async (state: Mapbox.MapState) => {
-    const radius = measure(
-      state.properties.bounds.ne[0],
-      state.properties.bounds.ne[1],
-      state.properties.bounds.sw[0],
-      state.properties.bounds.sw[1],
-    );
+    if (state !== mapState) {
+      const radius = measure(
+        state.properties.bounds.ne[0],
+        state.properties.bounds.ne[1],
+        state.properties.bounds.sw[0],
+        state.properties.bounds.sw[1],
+      );
 
-    // Mapbox Position yang pertama itu LATITUDE, yang kedua itu LONGITUDE
-    const center_lat = state.properties.center[0];
-    const center_lon = state.properties.center[1];
+      // Mapbox Position yang pertama itu LATITUDE, yang kedua itu LONGITUDE
+      const center_lat = state.properties.center[0];
+      const center_lon = state.properties.center[1];
 
-    if (buildingFetchLoading) return;
-    setBuildingFetchLoading(true);
+      if (buildingFetchLoading) return;
+      setBuildingFetchLoading(true);
 
-    const { data, error } = await supabase.rpc('get_nearby_buildings', {
-      lon: center_lon,
-      lat: center_lat,
-      max_distance: radius,
-    });
+      const { data, error } = await supabase.rpc('get_nearby_buildings', {
+        lon: center_lon,
+        lat: center_lat,
+        max_distance: radius,
+      });
 
-    setBuildingFetchLoading(false);
-    // console.log(buildings);
-    // console.log(levels);
+      setBuildingFetchLoading(false);
+      setMapState(state);
+      // console.log(buildings);
+      // console.log(levels);
 
-    if (error) {
-      console.error(error);
-      return;
-    } else if (data && data !== buildings) {
-      setBuildings(data.map((b: any) => b.gid));
-      setLevels([
-        ...new Set(data.flatMap((item: any) => item.level_order)),
-      ] as string[]);
+      if (error) {
+        console.error(error);
+        return;
+      } else if (data) {
+        const newBuildings = data.map((b: any) => b.gid);
+        if (newBuildings !== buildings) {
+          setBuildings(newBuildings);
+          setLevels([
+            ...new Set(data.flatMap((item: any) => item.level_order)),
+          ] as string[]);
+        }
+      }
     }
   };
 
