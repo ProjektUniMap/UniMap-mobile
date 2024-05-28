@@ -19,7 +19,7 @@ const App = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         setSession(session);
-        console.log(session);
+        // console.log(session);
         setIsLoading(false);
       } else {
         console.log('no user');
@@ -30,7 +30,7 @@ const App = () => {
     supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
         setSession(session);
-        console.log(session);
+        // console.log(session);
       } else {
         console.log('no user');
       }
