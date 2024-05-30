@@ -123,7 +123,7 @@ const LogInPage = ({ navigation }: Props) => {
             disabled={buttonDisabled}
             onPress={() => signInWithEmail()}
           >
-            <Text style={[kB3, { color: 'white' }]}>Sign Up</Text>
+            <Text style={[kB3, { color: 'white' }]}>Log In</Text>
           </Pressable>
           <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
             <View
@@ -154,7 +154,7 @@ const LogInPage = ({ navigation }: Props) => {
             onPress={() => {}}
           >
             <Text style={[kB3, { color: defaultBlue }]}>
-              Sign Up with Google
+              Log In with Google
             </Text>
           </Pressable>
           <View
@@ -165,14 +165,14 @@ const LogInPage = ({ navigation }: Props) => {
             }}
           >
             <Text style={[kR3, { color: defaultBlue }]}>
-              Already have an account?{' '}
+              Don't have an account?{' '}
               <Text
                 style={[
                   kR3,
                   { color: defaultBlue, textDecorationLine: 'underline' },
                 ]}
               >
-                Log In
+                Sign Up
               </Text>
             </Text>
           </View>
