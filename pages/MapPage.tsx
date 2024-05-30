@@ -31,6 +31,12 @@ const MapPage = ({
     });
   }, []);
 
+  // MapGeoJSON first just contains the GeoJSON from labtekv.json
+  // Push all available GeoJSON features into MapGeoJSON
+  for (const feature of LabtekVIIIGeoJSON.features) {
+    MapGeoJSON.features.push(feature);
+  }
+
   const map = useRef<MapView>(null);
 
   const cameraRef = useCallback((node: Camera) => {
@@ -83,41 +89,36 @@ const MapPage = ({
   }, [buildings]);
 
   const fetchBuildingInScreen = async (state: Mapbox.MapState) => {
-    if (state !== mapState) {
-      const radius = measure(
-        state.properties.bounds.ne[0],
-        state.properties.bounds.ne[1],
-        state.properties.bounds.sw[0],
-        state.properties.bounds.sw[1],
-      );
+    const radius = measure(
+      state.properties.bounds.ne[0],
+      state.properties.bounds.ne[1],
+      state.properties.bounds.sw[0],
+      state.properties.bounds.sw[1],
+    );
 
       const center_lat = state.properties.center[0];
       const center_lon = state.properties.center[1];
 
-      if (buildingFetchLoading) return;
-      setBuildingFetchLoading(true);
+    if (buildingFetchLoading) return;
+    setBuildingFetchLoading(true);
 
-      const { data, error } = await supabase.rpc('get_nearby_buildings', {
-        lon: center_lon,
-        lat: center_lat,
-        max_distance: radius,
-      });
+    const { data, error } = await supabase.rpc('get_nearby_buildings', {
+      lon: center_lon,
+      lat: center_lat,
+      max_distance: radius,
+    });
 
       setBuildingFetchLoading(false);
       setMapState(state);
 
-      if (error) {
-        console.error(error);
-        return;
-      } else if (data) {
-        const newBuildings = data.map((b: any) => b.gid);
-        if (newBuildings !== buildings) {
-          setBuildings(newBuildings);
-          setLevels([
-            ...new Set(data.flatMap((item: any) => item.level_order)),
-          ] as string[]);
-        }
-      }
+    if (error) {
+      console.error(error);
+      return;
+    } else if (data && data !== buildings) {
+      setBuildings(data.map((b: any) => b.gid));
+      setLevels([
+        ...new Set(data.flatMap((item: any) => item.level_order)),
+      ] as string[]);
     }
   };
 
