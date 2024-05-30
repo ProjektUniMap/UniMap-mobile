@@ -1,25 +1,25 @@
 {
-	"expo": {
-		"name": "UniMap",
-		"slug": "UniMap",
-		"version": "1.0.0",
-		"orientation": "portrait",
-		"userInterfaceStyle": "light",
-		"splash": {
-			"image": "./assets/images/splash.png",
-			"resizeMode": "cover",
-			"backgroundColor": "#ffffff"
-		},
-		"icon": "./assets/images/icon.png",
-		"assetBundlePatterns": ["**/*"],
-		"ios": {
-			"supportsTablet": true
-		},
-		"android": {
-			"package": "com.unimap.unimap"
-		},
-		"web": {
-			"favicon": "./assets/images/icon.png"
-		}
-	}
+  "expo": {
+    "name": "UniMap",
+    "slug": "UniMap",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
+    "icon": "./assets/images/icon.png",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.unimap.unimap"
+    },
+    "web": {
+      "favicon": "./assets/images/icon.png"
+    }
+  }
 }
