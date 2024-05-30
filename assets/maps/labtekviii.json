@@ -1279,7 +1279,8 @@
     {
       "type": "Feature",
       "properties": {
-        "indoor": "corridor"
+        "indoor": "corridor",
+        "level": "3"
       },
       "geometry": {
         "type": "Polygon",
@@ -3289,7 +3290,8 @@
     {
       "type": "Feature",
       "properties": {
-        "indoor": "corridor"
+        "indoor": "corridor",
+        "level": "4"
       },
       "geometry": {
         "type": "Polygon",
