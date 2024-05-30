@@ -8,7 +8,6 @@ import { supabase } from '../lib/supabase';
 import { User } from '@supabase/supabase-js';
 import { measure } from '../utils/geography';
 import SearchBar from '../components/SearchBar';
-import { NavigationProp, RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -54,9 +53,9 @@ const MapPage = ({
     route.params?.center,
   );
 
-  console.log(route.params['center']);
+  console.log('center:', route.params['center']);
 
-  // console.log(centerCoordinates);
+  console.log(centerCoordinates);
   const minZoomLevel = 18.5;
 
   useEffect(() => {

@@ -3,7 +3,6 @@ import WelcomePage from './pages/WelcomePage';
 import SignUpPage from './pages/SignUpPage';
 import {
   createNativeStackNavigator,
-  NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import MapPage from './pages/MapPage';
@@ -13,6 +12,7 @@ import { Session } from '@supabase/supabase-js';
 import SplashScreen from './pages/SplashScreen';
 import SearchPage from './pages/SearchPage';
 import { enableScreens } from 'react-native-screens';
+import ProfilePage from './pages/ProfilePage';
 
 export type RootStackParamList = {
   Map: undefined;
@@ -61,6 +61,14 @@ const App = () => {
             name="Search"
             component={SearchPage}
             options={{ headerTitle: '', headerShown: false }}
+          />
+          <Stack.Screen
+            name="Profile"
+            component={ProfilePage}
+            options={{
+              headerTitle: 'Edit Profile',
+              headerBackVisible: true,
+            }}
           />
         </Stack.Navigator>
       ) : (

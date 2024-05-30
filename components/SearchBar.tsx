@@ -29,7 +29,7 @@ const SearchBar = ({ navigation }: SearchBarProps) => {
       <TouchableOpacity
         style={styles.rightHandSide}
         onPressIn={() => {
-          console.log('Profile icon pressed');
+          navigation.navigate('Profile');
         }}
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
       >

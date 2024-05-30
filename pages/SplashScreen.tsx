@@ -1,12 +1,4 @@
-import {
-  Text,
-  Image,
-  View,
-  StyleSheet,
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-} from 'react-native';
+import { Image, View } from 'react-native';
 
 const SplashScreen = () => {
   return (
