@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@types/lodash": "^4.17.4",
     "@types/react": "~18.2.79",
     "prettier": "3.2.5",
     "react-native-dotenv": "^3.4.11",
