@@ -1,15 +1,16 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Mapbox, { MapView, Camera } from '@rnmapbox/maps';
 import MapSource from './../components/MapSource';
 import { FeatureCollection } from 'geojson';
 import LevelButtons from './../components/LevelButtons';
 import { supabase } from '../lib/supabase';
-import { User } from '@supabase/supabase-js';
 import { measure } from '../utils/geography';
 import SearchBar from '../components/SearchBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AppStackParamList } from '../routes/app.route';
+import { useMap } from '../context/MapContext';
+import defaultGeoJSON from '../assets/maps/labtekv.json';
 
 const EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN = process.env
   .EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
@@ -18,6 +19,7 @@ Mapbox.setAccessToken(EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN);
 type MapProps = NativeStackScreenProps<AppStackParamList, 'Map'>;
 
 const MapPage = ({ navigation, route }: MapProps) => {
+  const { camera } = useMap();
   const map = useRef<MapView>(null);
 
   const [mapState, setMapState] = useState<Mapbox.MapState | null>(null);
@@ -25,7 +27,9 @@ const MapPage = ({ navigation, route }: MapProps) => {
   const [buildingFetchLoading, setBuildingFetchLoading] = useState(false);
   const [buildings, setBuildings] = useState<Array<Number>>([]);
   const [selectedLevel, setSelectedLevel] = useState('2');
-  const [shape, setShape] = useState<FeatureCollection | null>(null);
+  const [shape, setShape] = useState<FeatureCollection | undefined>(
+    defaultGeoJSON as unknown as FeatureCollection,
+  );
   const minZoomLevel = 18.5;
 
   useEffect(() => {
@@ -47,7 +51,7 @@ const MapPage = ({ navigation, route }: MapProps) => {
     if (buildings.length > 0) {
       fetchMapGeoJSON();
     } else {
-      setShape(null);
+      setShape(defaultGeoJSON as unknown as FeatureCollection);
     }
   }, [buildings]);
 
@@ -95,6 +99,7 @@ const MapPage = ({ navigation, route }: MapProps) => {
       <View style={styles.container}>
         <MapView style={styles.map} ref={map} onMapIdle={fetchBuildingInScreen}>
           <Camera
+            ref={camera}
             zoomLevel={19}
             pitch={20}
             heading={10}

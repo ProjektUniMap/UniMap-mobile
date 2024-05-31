@@ -11,7 +11,7 @@ import { FeatureCollection, Feature } from 'geojson';
 interface MapSourceProps {
   selectedLevel: string;
   minZoomLevel: number;
-  shape: FeatureCollection;
+  shape: FeatureCollection | undefined;
 }
 
 const MapSource = ({ selectedLevel, minZoomLevel, shape }: MapSourceProps) => {

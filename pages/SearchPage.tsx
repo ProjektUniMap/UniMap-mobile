@@ -16,12 +16,15 @@ import { debounce } from 'lodash';
 import { supabase } from '../lib/supabase';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Divider } from '@rneui/themed';
+import { useMap } from '../context/MapContext';
 
 interface SearchPageProps {
   navigation: NavigationProp<any>;
 }
 
 const SearchPage = ({ navigation }: SearchPageProps) => {
+  const { moveCamera } = useMap();
+
   const [query, setQuery] = useState('');
   const [displayedQuery, setDisplayedQuery] = useState('');
   const [rooms, setRooms] = useState<Array<any>>([]);
@@ -87,11 +90,11 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
                 style={styles.item}
                 onPress={() => {
                   console.log({
-                    centerSearch: [item['lon'], item['lat']],
+                    centerSearch: [item['lat'], item['lon']],
+                    type: item['type'],
                   });
-                  navigation.navigate('Map', {
-                    center: [item['lon'], item['lat']],
-                  });
+                  moveCamera([item['lat'], item['lon']]);
+                  navigation.goBack();
                 }}
               >
                 <FontAwesome5 name="building" size={24} color="#1168A7" />
@@ -106,10 +109,10 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
                 onPress={() => {
                   console.log({
                     centerSearch: [item['lon'], item['lat']],
+                    type: item['type'],
                   });
-                  navigation.navigate('Map', {
-                    center: [item['lon'], item['lat']],
-                  });
+                  moveCamera([item['lon'], item['lat']]);
+                  navigation.goBack();
                 }}
               >
                 <MaterialIcons name="meeting-room" size={24} color="#1168A7" />
