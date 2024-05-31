@@ -20,14 +20,19 @@ import {
 } from '../utils/constant';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTogglePasswordVisibility } from '../hooks/useTogglePasswordVisibility';
-import { NavigationProp } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
+import { AuthStackParamList } from '../routes/auth.route';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useAuth } from '../context/AuthContext';
 
-type Props = {
-  navigation: NavigationProp<any>;
-};
+type SignUpPageNavigationProp = NativeStackScreenProps<
+  AuthStackParamList,
+  'SignUp'
+>;
 
-const SignUpPage = ({ navigation }: Props) => {
+const SignUpPage = ({ navigation }: SignUpPageNavigationProp) => {
+  const { signUp } = useAuth();
+
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -65,23 +70,12 @@ const SignUpPage = ({ navigation }: Props) => {
     const {
       data: { session },
       error,
-    } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-      options: {
-        data: {
-          full_name: fullName,
-        },
-      },
-    });
+    } = await signUp({ email, password, full_name: fullName });
 
     if (error) Alert.alert(error.message);
     if (!session) {
       Alert.alert('Please check your inbox for email verification!');
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Map' }],
-      });
+      // navigation.navigate('Map');
     }
   }
 

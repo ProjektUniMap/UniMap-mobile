@@ -8,40 +8,17 @@ import { supabase } from '../lib/supabase';
 import { User } from '@supabase/supabase-js';
 import { measure } from '../utils/geography';
 import SearchBar from '../components/SearchBar';
-import { RootStackParamList } from '../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AppStackParamList } from '../routes/app.route';
 
 const EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN = process.env
   .EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
 Mapbox.setAccessToken(EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
-const MapPage = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<RootStackParamList, 'Map', 'MyStack'>) => {
-  const [user, setUser] = useState<User | null>(null);
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setUser(user);
-      } else {
-        Alert.alert('Error Accessing User');
-      }
-    });
-  }, []);
+type MapProps = NativeStackScreenProps<AppStackParamList, 'Map'>;
 
+const MapPage = ({ navigation, route }: MapProps) => {
   const map = useRef<MapView>(null);
-
-  const cameraRef = useCallback((node: Camera) => {
-    if (node !== null) {
-      node.setCamera({
-        centerCoordinate: route.params['center'],
-        zoomLevel: 19,
-        pitch: 20,
-        heading: 10,
-      });
-    }
-  }, []);
 
   const [mapState, setMapState] = useState<Mapbox.MapState | null>(null);
   const [levels, setLevels] = useState<string[]>([]);
@@ -49,13 +26,6 @@ const MapPage = ({
   const [buildings, setBuildings] = useState<Array<Number>>([]);
   const [selectedLevel, setSelectedLevel] = useState('2');
   const [shape, setShape] = useState<FeatureCollection | null>(null);
-  // const [centerCoordinates, setCenterCoordinates] = useState<[number, number]>(
-  //   route.params?.center,
-  // );
-
-  // console.log('center:', route.params['center']);
-
-  // console.log(centerCoordinates);
   const minZoomLevel = 18.5;
 
   useEffect(() => {
@@ -125,7 +95,6 @@ const MapPage = ({
       <View style={styles.container}>
         <MapView style={styles.map} ref={map} onMapIdle={fetchBuildingInScreen}>
           <Camera
-            ref={cameraRef}
             zoomLevel={19}
             pitch={20}
             heading={10}

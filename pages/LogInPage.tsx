@@ -20,14 +20,19 @@ import {
 } from '../utils/constant';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTogglePasswordVisibility } from '../hooks/useTogglePasswordVisibility';
-import { NavigationProp } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
+import { AuthStackParamList } from '../routes/auth.route';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useAuth } from '../context/AuthContext';
 
-type Props = {
-  navigation: NavigationProp<any>;
-};
+type LogInPageNavigationProp = NativeStackScreenProps<
+  AuthStackParamList,
+  'LogIn'
+>;
 
-const LogInPage = ({ navigation }: Props) => {
+const LogInPage = ({ navigation }: LogInPageNavigationProp) => {
+  const { signIn } = useAuth();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -48,19 +53,9 @@ const LogInPage = ({ navigation }: Props) => {
 
   async function signInWithEmail() {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
+    const { error } = await signIn({ email, password });
 
     if (error) Alert.alert(error.message);
-    else {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Map' }],
-      });
-      //   navigation.navigate('Map');
-    }
     setLoading(false);
   }
 
