@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import WelcomePage from './pages/WelcomePage';
 import SignUpPage from './pages/SignUpPage';
-import {
-  createNativeStackNavigator,
-} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import MapPage from './pages/MapPage';
 import LogInPage from './pages/LogInPage';
@@ -29,10 +27,16 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setIsLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        setSession(session);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setIsLoading(false);
+      });
 
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);

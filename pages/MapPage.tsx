@@ -49,13 +49,13 @@ const MapPage = ({
   const [buildings, setBuildings] = useState<Array<Number>>([]);
   const [selectedLevel, setSelectedLevel] = useState('2');
   const [shape, setShape] = useState<FeatureCollection | null>(null);
-  const [centerCoordinates, setCenterCoordinates] = useState<[number, number]>(
-    route.params?.center,
-  );
+  // const [centerCoordinates, setCenterCoordinates] = useState<[number, number]>(
+  //   route.params?.center,
+  // );
 
-  console.log('center:', route.params['center']);
+  // console.log('center:', route.params['center']);
 
-  console.log(centerCoordinates);
+  // console.log(centerCoordinates);
   const minZoomLevel = 18.5;
 
   useEffect(() => {
@@ -129,7 +129,7 @@ const MapPage = ({
             zoomLevel={19}
             pitch={20}
             heading={10}
-            // centerCoordinate={centerCoordinates}
+            centerCoordinate={[107.60978612852416, -6.890546482705507]}
           />
           <MapSource
             selectedLevel={selectedLevel}
