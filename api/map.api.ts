@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
 import { FeatureCollection } from 'geojson';
+import { Room } from '../types';
 
 export const getGeoJSON = async (buildingIds: Array<Number>) => {
   const { data, error } = await supabase.rpc('export_geojson_by_building_ids', {
@@ -28,4 +29,14 @@ export const getNearbyBuildings = async (
     max_distance: radius,
   });
   return { data, error };
+};
+
+export const getRoomById = async (roomId: Number) => {
+  const response = await supabase
+    .from('rooms')
+    .select('*, buildings(*)')
+    .eq('id', roomId)
+    .single();
+  console.log(response.data);
+  return { data: response.data as Room | null, error: response.error };
 };

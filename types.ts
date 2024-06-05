@@ -5,9 +5,26 @@ export interface Profile {
   updated_at: string;
 }
 
-export interface Room {}
+export interface Room {
+  id: number;
+  building_id: number;
+  name: string;
+  display_name: string;
+  level: string;
+  location: string;
+  center_point: string;
+  properties: Object;
+  buildings?: Building;
+}
 
-export interface Building {}
+export interface Building {
+  gid: number;
+  name: string;
+  display_name: string;
+  code: string;
+  level_order: string[];
+  geog: string;
+}
 
 export interface SearchResult {
   name: string;

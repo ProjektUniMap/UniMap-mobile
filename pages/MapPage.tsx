@@ -1,5 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Modal,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+  Dimensions,
+  Easing,
+} from 'react-native';
 import Mapbox, { MapView, Camera } from '@rnmapbox/maps';
 import MapSource from './../components/MapSource';
 import { FeatureCollection } from 'geojson';
@@ -11,6 +19,7 @@ import { AppStackParamList } from '../routes/app.route';
 import { useMap } from '../context/MapContext';
 import defaultGeoJSON from '../assets/maps/labtekv.json';
 import { getGeoJSON, getNearbyBuildings } from '../api/map.api';
+import DetailModal from '../components/DetailModal';
 
 const EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN = process.env
   .EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
@@ -20,6 +29,7 @@ type MapProps = NativeStackScreenProps<AppStackParamList, 'Map'>;
 
 const MapPage = ({ navigation, route }: MapProps) => {
   const { map, camera } = useMap();
+  const screenHeight = Dimensions.get('window').height;
 
   const [mapState, setMapState] = useState<Mapbox.MapState | null>(null);
   const [levels, setLevels] = useState<string[]>([]);
@@ -29,7 +39,10 @@ const MapPage = ({ navigation, route }: MapProps) => {
   const [shape, setShape] = useState<FeatureCollection | undefined>(
     defaultGeoJSON as unknown as FeatureCollection,
   );
+  const [selectedRoomId, setSelectedRoomId] = useState<Number | undefined>(-1);
   const minZoomLevel = 18.5;
+
+  const animatedValue = useRef(new Animated.Value(10)).current;
 
   useEffect(() => {
     if (buildings.length > 0) {
@@ -81,6 +94,16 @@ const MapPage = ({ navigation, route }: MapProps) => {
     }
   };
 
+  useEffect(() => {
+    const targetValue = selectedRoomId !== -1 ? screenHeight * 0.23 : 10;
+    Animated.timing(animatedValue, {
+      toValue: targetValue,
+      duration: 250,
+      useNativeDriver: false,
+      easing: Easing.elastic(1),
+    }).start();
+  }, [selectedRoomId]);
+
   return (
     <View style={styles.page}>
       <View style={styles.container}>
@@ -96,6 +119,8 @@ const MapPage = ({ navigation, route }: MapProps) => {
             selectedLevel={selectedLevel}
             minZoomLevel={minZoomLevel}
             shape={shape}
+            selectedRoomId={selectedRoomId}
+            setSelectedRoomId={setSelectedRoomId}
           />
         </MapView>
       </View>
@@ -104,14 +129,18 @@ const MapPage = ({ navigation, route }: MapProps) => {
         <SearchBar navigation={navigation} />
       </View>
       {levels.length > 0 && (
-        <View style={styles.levelButtons}>
+        <Animated.View style={[styles.levelButtons, { bottom: animatedValue }]}>
           <LevelButtons
             levels={levels}
             selectedLevel={selectedLevel}
             setSelectedLevel={setSelectedLevel}
           />
-        </View>
+        </Animated.View>
       )}
+      <DetailModal
+        selectedRoomId={selectedRoomId}
+        setSelectedRoomId={setSelectedRoomId}
+      />
     </View>
   );
 };
@@ -131,7 +160,6 @@ const styles = StyleSheet.create({
   },
   levelButtons: {
     position: 'absolute',
-    bottom: 10,
     right: 10,
   },
   searchBar: {

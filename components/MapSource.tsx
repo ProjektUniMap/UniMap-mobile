@@ -12,11 +12,29 @@ interface MapSourceProps {
   selectedLevel: string;
   minZoomLevel: number;
   shape: FeatureCollection | undefined;
+  selectedRoomId: Number | undefined;
+  setSelectedRoomId: React.Dispatch<React.SetStateAction<Number | undefined>>;
 }
 
-const MapSource = ({ selectedLevel, minZoomLevel, shape }: MapSourceProps) => {
+const MapSource = ({
+  selectedLevel,
+  minZoomLevel,
+  shape,
+  selectedRoomId,
+  setSelectedRoomId,
+}: MapSourceProps) => {
   return (
-    <ShapeSource id="indoor" shape={shape}>
+    <ShapeSource
+      id="indoor"
+      shape={shape}
+      onPress={(p) => {
+        if (selectedRoomId === p.features[0].properties?.id) {
+          setSelectedRoomId(-1);
+          return;
+        }
+        setSelectedRoomId(p.features[0].properties?.id as Number);
+      }}
+    >
       <FillLayer
         id="indoor-fill"
         style={{
@@ -35,6 +53,12 @@ const MapSource = ({ selectedLevel, minZoomLevel, shape }: MapSourceProps) => {
         id="indoor-line"
         style={{ lineColor: '#000' }}
         filter={['==', 'level', selectedLevel]}
+        minZoomLevel={minZoomLevel}
+      />
+      <LineLayer
+        id="highlight"
+        style={{ lineColor: '#00F', lineWidth: 3 }}
+        filter={['==', 'id', selectedRoomId]}
         minZoomLevel={minZoomLevel}
       />
       <SymbolLayer
