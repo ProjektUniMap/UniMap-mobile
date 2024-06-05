@@ -11,9 +11,10 @@ import { NavigationProp } from '@react-navigation/native';
 
 interface SearchBarProps {
   navigation: NavigationProp<any>;
+  setOpenSettingsModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SearchBar = ({ navigation }: SearchBarProps) => {
+const SearchBar = ({ navigation, setOpenSettingsModal }: SearchBarProps) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -29,7 +30,7 @@ const SearchBar = ({ navigation }: SearchBarProps) => {
       <TouchableOpacity
         style={styles.rightHandSide}
         onPressIn={() => {
-          navigation.navigate('Profile');
+          setOpenSettingsModal(true);
         }}
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
       >

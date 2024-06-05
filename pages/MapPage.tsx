@@ -7,6 +7,7 @@ import {
   Animated,
   Dimensions,
   Easing,
+  Settings,
 } from 'react-native';
 import Mapbox, { MapView, Camera } from '@rnmapbox/maps';
 import MapSource from './../components/MapSource';
@@ -20,6 +21,7 @@ import { useMap } from '../context/MapContext';
 import defaultGeoJSON from '../assets/maps/labtekv.json';
 import { getGeoJSON, getNearbyBuildings } from '../api/map.api';
 import DetailModal from '../components/DetailModal';
+import SettingsModal from '../components/SettingsModal';
 
 const EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN = process.env
   .EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
@@ -45,6 +47,7 @@ const MapPage = ({ navigation, route }: MapProps) => {
   const [shape, setShape] = useState<FeatureCollection | undefined>(
     defaultGeoJSON as unknown as FeatureCollection,
   );
+  const [openSettingsModal, setOpenSettingsModal] = useState(false);
   const minZoomLevel = 18.5;
 
   const animatedValue = useRef(new Animated.Value(10)).current;
@@ -59,6 +62,16 @@ const MapPage = ({ navigation, route }: MapProps) => {
       setShape(defaultGeoJSON as unknown as FeatureCollection);
     }
   }, [buildings]);
+
+  useEffect(() => {
+    const targetValue = selectedRoomId !== -1 ? screenHeight * 0.22 : 10;
+    Animated.timing(animatedValue, {
+      toValue: targetValue,
+      duration: 250,
+      useNativeDriver: false,
+      easing: Easing.elastic(1),
+    }).start();
+  }, [selectedRoomId]);
 
   const fetchBuildingInScreen = async (state: Mapbox.MapState) => {
     if (state !== mapState) {
@@ -99,16 +112,6 @@ const MapPage = ({ navigation, route }: MapProps) => {
     }
   };
 
-  useEffect(() => {
-    const targetValue = selectedRoomId !== -1 ? screenHeight * 0.22 : 10;
-    Animated.timing(animatedValue, {
-      toValue: targetValue,
-      duration: 250,
-      useNativeDriver: false,
-      easing: Easing.elastic(1),
-    }).start();
-  }, [selectedRoomId]);
-
   return (
     <View style={styles.page}>
       <View style={styles.container}>
@@ -131,7 +134,10 @@ const MapPage = ({ navigation, route }: MapProps) => {
       </View>
 
       <View style={styles.searchBar}>
-        <SearchBar navigation={navigation} />
+        <SearchBar
+          navigation={navigation}
+          setOpenSettingsModal={setOpenSettingsModal}
+        />
       </View>
       {levels.length > 0 && (
         <Animated.View style={[styles.levelButtons, { bottom: animatedValue }]}>
@@ -145,6 +151,11 @@ const MapPage = ({ navigation, route }: MapProps) => {
       <DetailModal
         selectedRoomId={selectedRoomId}
         setSelectedRoomId={setSelectedRoomId}
+      />
+      <SettingsModal
+        navigation={navigation}
+        openSettingsModal={openSettingsModal}
+        setOpenSettingsModal={setOpenSettingsModal}
       />
     </View>
   );

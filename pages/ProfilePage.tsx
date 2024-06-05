@@ -10,7 +10,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { defaultBlue, kB2, kB3, kR1 } from '../utils/constant';
-import { supabase } from '../lib/supabase';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AppStackParamList } from '../routes/app.route';
 import { useAuth } from '../context/AuthContext';
@@ -51,28 +50,6 @@ const ProfilePage = ({ navigation, route }: ProfileProps) => {
             <Text style={styles.label}>E-mail</Text>
             <Text style={styles.value}>{user?.email}</Text>
           </View>
-          <Pressable
-            style={[
-              styles.button,
-              { marginTop: 24, marginBottom: 12, backgroundColor: defaultBlue },
-            ]}
-            onPress={() => {
-              navigation.navigate('Favorites');
-            }}
-          >
-            <Text style={[kB3, { color: 'white' }]}>View Favorites</Text>
-          </Pressable>
-          <Pressable
-            style={[
-              styles.button,
-              { marginBottom: 12, backgroundColor: 'white' },
-            ]}
-            onPress={() => {
-              signOut();
-            }}
-          >
-            <Text style={[kB3, { color: defaultBlue }]}>Logout</Text>
-          </Pressable>
         </View>
       </ScrollView>
     </SafeAreaView>
