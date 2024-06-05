@@ -1,8 +1,9 @@
-import { Camera } from '@rnmapbox/maps';
+import { Camera, MapView } from '@rnmapbox/maps';
 import { CameraRef } from '@rnmapbox/maps/lib/typescript/src/components/Camera';
 import { createContext, useContext, useRef } from 'react';
 
 interface MapContextProps {
+  map: React.RefObject<MapView>;
   camera: React.RefObject<CameraRef>;
   moveCamera: ([lon, lat]: [number, number]) => void;
 }
@@ -21,6 +22,7 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const camera = useRef<Camera>(null);
+  const map = useRef<MapView>(null);
 
   const moveCamera = ([lon, lat]: [number, number]) => {
     if (camera.current) console.log('HEY');
@@ -33,7 +35,7 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <MapContext.Provider value={{ camera, moveCamera }}>
+    <MapContext.Provider value={{ map, camera, moveCamera }}>
       {children}
     </MapContext.Provider>
   );

@@ -9,14 +9,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { CommonActions, NavigationProp } from '@react-navigation/native';
+import { NavigationProp } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { debounce } from 'lodash';
-import { supabase } from '../lib/supabase';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Divider } from '@rneui/themed';
 import { useMap } from '../context/MapContext';
+import { searchRoomAndBuilding } from '../api/search.api';
+import { SearchResult } from '../types';
 
 interface SearchPageProps {
   navigation: NavigationProp<any>;
@@ -27,7 +28,7 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
 
   const [query, setQuery] = useState('');
   const [displayedQuery, setDisplayedQuery] = useState('');
-  const [rooms, setRooms] = useState<Array<any>>([]);
+  const [searchResult, setSearchResult] = useState<Array<SearchResult>>([]);
 
   const debounceCall = useCallback(
     debounce((q: string) => {
@@ -44,14 +45,8 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
   useEffect(() => {
     console.log('Query:', query);
     const fetchRooms = async (q: string) => {
-      const { data, error } = await supabase.rpc(
-        'search_rooms_with_similar_names',
-        {
-          search_term: query,
-        },
-      );
-      console.log(error, data);
-      setRooms(data);
+      const { data, error } = await searchRoomAndBuilding(query);
+      setSearchResult(data);
     };
 
     fetchRooms(query);
@@ -80,26 +75,26 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
       </View>
 
       <FlatList
-        data={rooms}
+        data={searchResult}
         style={styles.itemList}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <View>
-            {item['type'] === 'building' ? (
+            {item.type === 'building' ? (
               <Pressable
                 style={styles.item}
                 onPress={() => {
                   console.log({
-                    centerSearch: [item['lat'], item['lon']],
-                    type: item['type'],
+                    centerSearch: [item.lat, item.lon],
+                    type: item.type,
                   });
-                  moveCamera([item['lat'], item['lon']]);
+                  moveCamera([item.lat, item.lon]);
                   navigation.goBack();
                 }}
               >
                 <FontAwesome5 name="building" size={24} color="#1168A7" />
                 <View>
-                  <Text style={styles.itemTitleText}>{item['name']}</Text>
+                  <Text style={styles.itemTitleText}>{item.name}</Text>
                   <Text style={styles.itemSubtitleText}>Building</Text>
                 </View>
               </Pressable>
@@ -108,18 +103,18 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
                 style={styles.item}
                 onPress={() => {
                   console.log({
-                    centerSearch: [item['lon'], item['lat']],
-                    type: item['type'],
+                    centerSearch: [item.lon, item.lat],
+                    type: item.type,
                   });
-                  moveCamera([item['lon'], item['lat']]);
+                  moveCamera([item.lon, item.lat]);
                   navigation.goBack();
                 }}
               >
                 <MaterialIcons name="meeting-room" size={24} color="#1168A7" />
                 <View>
-                  <Text style={styles.itemTitleText}>{item['name']}</Text>
+                  <Text style={styles.itemTitleText}>{item.name}</Text>
                   <Text style={styles.itemSubtitleText}>
-                    Room at {item['building_name']}
+                    Room at {item.building_name}
                   </Text>
                   <Text style={styles.itemSubtitleText}>
                     Floor {item.level}

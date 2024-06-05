@@ -8,3 +8,13 @@ export interface Profile {
 export interface Room {}
 
 export interface Building {}
+
+export interface SearchResult {
+  name: string;
+  display_name: string;
+  building_name: string;
+  lat: number;
+  lon: number;
+  level: string;
+  type: 'room' | 'building';
+}
