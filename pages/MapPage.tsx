@@ -95,7 +95,7 @@ const MapPage = ({ navigation, route }: MapProps) => {
   };
 
   useEffect(() => {
-    const targetValue = selectedRoomId !== -1 ? screenHeight * 0.23 : 10;
+    const targetValue = selectedRoomId !== -1 ? screenHeight * 0.22 : 10;
     Animated.timing(animatedValue, {
       toValue: targetValue,
       duration: 250,
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
   levelButtons: {
     position: 'absolute',
-    right: 10,
+    right: '3%',
   },
   searchBar: {
     position: 'absolute',

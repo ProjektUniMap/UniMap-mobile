@@ -35,3 +35,11 @@ export interface SearchResult {
   level: string;
   type: 'room' | 'building';
 }
+
+export interface UserSaves {
+  id: number;
+  user_id: string;
+  room_id: number;
+  created_at: string;
+  room?: Room;
+}

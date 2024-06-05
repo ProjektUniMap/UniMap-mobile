@@ -37,6 +37,5 @@ export const getRoomById = async (roomId: Number) => {
     .select('*, buildings(*)')
     .eq('id', roomId)
     .single();
-  console.log(response.data);
   return { data: response.data as Room | null, error: response.error };
 };

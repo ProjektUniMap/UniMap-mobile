@@ -12,6 +12,13 @@ import { getRoomById } from '../api/map.api';
 import { Room } from '../types';
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
+import {
+  createUserSavedRoom,
+  deleteUserSavedRoom,
+  isUserSavedRoom,
+} from '../api/profile.api';
+import { set } from 'lodash';
+import { useAuth } from '../context/AuthContext';
 
 interface DetailModalProps {
   selectedRoomId: Number | undefined;
@@ -23,9 +30,28 @@ const DetailModal = ({
   setSelectedRoomId,
 }: DetailModalProps) => {
   const [details, setDetails] = useState<Room | null>(null);
+  const [isSaved, setIsSaved] = useState(false);
+
+  const { profile } = useAuth();
 
   const handleClose = () => {
     setSelectedRoomId(-1);
+  };
+
+  const handleSave = async () => {
+    let data = null;
+    if (isSaved) {
+      data = await deleteUserSavedRoom(
+        profile?.id as string,
+        selectedRoomId as number,
+      );
+    } else {
+      data = await createUserSavedRoom(
+        profile?.id as string,
+        selectedRoomId as number,
+      );
+    }
+    if (data) setIsSaved(!isSaved);
   };
 
   const notImplemented = () => {
@@ -34,8 +60,17 @@ const DetailModal = ({
 
   useEffect(() => {
     (async () => {
-      const { data } = await getRoomById(selectedRoomId as Number);
+      const { data } = await getRoomById(selectedRoomId as number);
       if (data) setDetails(data);
+    })();
+
+    (async () => {
+      const data = await isUserSavedRoom(
+        profile?.id as string,
+        selectedRoomId as number,
+      );
+      if (data) setIsSaved(true);
+      else setIsSaved(false);
     })();
   }, [selectedRoomId]);
 
@@ -47,6 +82,13 @@ const DetailModal = ({
     >
       <TouchableWithoutFeedback onPress={handleClose}>
         <View style={styles.overlay}>
+          <Pressable style={styles.bookmark} onPress={handleSave}>
+            {isSaved ? (
+              <MaterialIcons name="bookmark" size={24} color="#1168A7" />
+            ) : (
+              <MaterialIcons name="bookmark-border" size={24} color="#1168A7" />
+            )}
+          </Pressable>
           <TouchableWithoutFeedback>
             <View style={styles.modalContent}>
               <View>
@@ -148,6 +190,16 @@ const styles = StyleSheet.create({
   shareText: {
     color: '#1168A7',
     fontWeight: '500',
+  },
+  bookmark: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20000,
+    height: 50,
+    width: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom: '1%',
+    left: '3%',
   },
 });
 
