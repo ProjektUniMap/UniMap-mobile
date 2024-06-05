@@ -21,9 +21,9 @@ const ProfilePage = ({ navigation, route }: ProfileProps) => {
   const { profile, user, signOut } = useAuth();
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <ScrollView>
-        <View style={styles.container}>
+        <View>
           <View
             style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
           >
@@ -36,6 +36,7 @@ const ProfilePage = ({ navigation, route }: ProfileProps) => {
                 name="account-circle"
                 size={64}
                 color="#1168A7"
+                style={{ backgroundColor: 'white' }}
               />
             </TouchableOpacity>
             <Text style={{ color: '#1168A7', marginBottom: 30 }}>
@@ -53,7 +54,18 @@ const ProfilePage = ({ navigation, route }: ProfileProps) => {
           <Pressable
             style={[
               styles.button,
-              { marginTop: 24, marginBottom: 12, backgroundColor: 'white' },
+              { marginTop: 24, marginBottom: 12, backgroundColor: defaultBlue },
+            ]}
+            onPress={() => {
+              navigation.navigate('Favorites');
+            }}
+          >
+            <Text style={[kB3, { color: 'white' }]}>View Favorites</Text>
+          </Pressable>
+          <Pressable
+            style={[
+              styles.button,
+              { marginBottom: 12, backgroundColor: 'white' },
             ]}
             onPress={() => {
               signOut();
@@ -69,6 +81,9 @@ const ProfilePage = ({ navigation, route }: ProfileProps) => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: 'white',
+    // alignItems: 'center',
     padding: 26,
   },
   label: {

@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import { Profile, UserSaves } from '../types';
+import { Profile, SearchResult, UserSaves } from '../types';
 
 export const getProfileById = async (id: string) => {
   const { data, error } = await supabase
@@ -24,6 +24,13 @@ export const getUserSavedRooms = async (id: string) => {
     return null;
   }
   return data as UserSaves[];
+};
+
+export const getUserSavedRoomsAsSearchResults = async (id: string) => {
+  const response = await supabase.rpc('get_user_favorites', {
+    uid: id,
+  });
+  return { data: response.data as SearchResult[], error: response.error };
 };
 
 export const isUserSavedRoom = async (user_id: string, room_id: number) => {
