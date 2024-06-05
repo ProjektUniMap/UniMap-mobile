@@ -11,13 +11,12 @@ import {
 } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { FontAwesome5 } from '@expo/vector-icons';
 import { debounce } from 'lodash';
-import { MaterialIcons } from '@expo/vector-icons';
 import { Divider } from '@rneui/themed';
 import { useMap } from '../context/MapContext';
 import { searchRoomAndBuilding } from '../api/search.api';
 import { SearchResult } from '../types';
+import PlaceItem from '../components/PlaceItem';
 
 interface SearchPageProps {
   navigation: NavigationProp<any>;
@@ -79,50 +78,11 @@ const SearchPage = ({ navigation }: SearchPageProps) => {
         style={styles.itemList}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
-          <View>
-            {item.type === 'building' ? (
-              <Pressable
-                style={styles.item}
-                onPress={() => {
-                  console.log({
-                    centerSearch: [item.lat, item.lon],
-                    type: item.type,
-                  });
-                  moveCamera([item.lat, item.lon]);
-                  navigation.goBack();
-                }}
-              >
-                <FontAwesome5 name="building" size={24} color="#1168A7" />
-                <View>
-                  <Text style={styles.itemTitleText}>{item.name}</Text>
-                  <Text style={styles.itemSubtitleText}>Building</Text>
-                </View>
-              </Pressable>
-            ) : (
-              <Pressable
-                style={styles.item}
-                onPress={() => {
-                  console.log({
-                    centerSearch: [item.lon, item.lat],
-                    type: item.type,
-                  });
-                  moveCamera([item.lon, item.lat]);
-                  navigation.goBack();
-                }}
-              >
-                <MaterialIcons name="meeting-room" size={24} color="#1168A7" />
-                <View>
-                  <Text style={styles.itemTitleText}>{item.name}</Text>
-                  <Text style={styles.itemSubtitleText}>
-                    Room at {item.building_name}
-                  </Text>
-                  <Text style={styles.itemSubtitleText}>
-                    Floor {item.level}
-                  </Text>
-                </View>
-              </Pressable>
-            )}
-          </View>
+          <PlaceItem
+            item={item}
+            navigation={navigation}
+            moveCamera={moveCamera}
+          />
         )}
         ItemSeparatorComponent={() => <Divider style={{ marginBottom: 10 }} />}
       />
@@ -135,25 +95,6 @@ const styles = StyleSheet.create({
     width: '85%',
     // gap: 8,
     marginTop: 16,
-  },
-
-  item: {
-    width: '100%',
-    flexDirection: 'row',
-    gap: 20,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-
-  itemTitleText: {
-    fontSize: 16,
-    // fontWeight: 'bold',
-  },
-
-  itemSubtitleText: {
-    fontSize: 14,
-    color: 'gray',
-    // fontWeight: 'bold',
   },
 
   container: {
