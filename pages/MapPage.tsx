@@ -28,18 +28,23 @@ Mapbox.setAccessToken(EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN);
 type MapProps = NativeStackScreenProps<AppStackParamList, 'Map'>;
 
 const MapPage = ({ navigation, route }: MapProps) => {
-  const { map, camera } = useMap();
+  const {
+    map,
+    camera,
+    selectedLevel,
+    setSelectedLevel,
+    selectedRoomId,
+    setSelectedRoomId,
+  } = useMap();
   const screenHeight = Dimensions.get('window').height;
 
   const [mapState, setMapState] = useState<Mapbox.MapState | null>(null);
   const [levels, setLevels] = useState<string[]>([]);
   const [buildingFetchLoading, setBuildingFetchLoading] = useState(false);
   const [buildings, setBuildings] = useState<Array<Number>>([]);
-  const [selectedLevel, setSelectedLevel] = useState('2');
   const [shape, setShape] = useState<FeatureCollection | undefined>(
     defaultGeoJSON as unknown as FeatureCollection,
   );
-  const [selectedRoomId, setSelectedRoomId] = useState<Number | undefined>(-1);
   const minZoomLevel = 18.5;
 
   const animatedValue = useRef(new Animated.Value(10)).current;

@@ -7,7 +7,11 @@ import { SearchResult } from '../types';
 interface PlaceItemProps {
   item: SearchResult;
   navigation: any;
-  moveCamera: (center: [number, number]) => void;
+  moveCamera: (
+    [lon, lat]: [number, number],
+    level: string,
+    roomId: number,
+  ) => void;
 }
 
 const PlaceItem = ({ item, navigation, moveCamera }: PlaceItemProps) => {
@@ -21,7 +25,7 @@ const PlaceItem = ({ item, navigation, moveCamera }: PlaceItemProps) => {
               centerSearch: [item.lat, item.lon],
               type: item.type,
             });
-            moveCamera([item.lat, item.lon]);
+            moveCamera([item.lat, item.lon], item.level, -1);
             navigation.goBack();
           }}
         >
@@ -39,7 +43,7 @@ const PlaceItem = ({ item, navigation, moveCamera }: PlaceItemProps) => {
               centerSearch: [item.lon, item.lat],
               type: item.type,
             });
-            moveCamera([item.lon, item.lat]);
+            moveCamera([item.lon, item.lat], item.level, item.id);
             navigation.goBack();
           }}
         >

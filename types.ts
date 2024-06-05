@@ -27,6 +27,7 @@ export interface Building {
 }
 
 export interface SearchResult {
+  id: number;
   name: string;
   display_name: string;
   building_name: string;
