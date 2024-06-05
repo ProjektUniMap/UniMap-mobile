@@ -1,85 +1,77 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Modal,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+  Dimensions,
+  Easing,
+  Settings,
+} from 'react-native';
 import Mapbox, { MapView, Camera } from '@rnmapbox/maps';
 import MapSource from './../components/MapSource';
 import { FeatureCollection } from 'geojson';
 import LevelButtons from './../components/LevelButtons';
-import { supabase } from '../lib/supabase';
-import { User } from '@supabase/supabase-js';
 import { measure } from '../utils/geography';
 import SearchBar from '../components/SearchBar';
-import { RootStackParamList } from '../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AppStackParamList } from '../routes/app.route';
+import { useMap } from '../context/MapContext';
+import defaultGeoJSON from '../assets/maps/labtekv.json';
+import { getGeoJSON, getNearbyBuildings } from '../api/map.api';
+import DetailModal from '../components/DetailModal';
+import SettingsModal from '../components/SettingsModal';
 
 const EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN = process.env
   .EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
 Mapbox.setAccessToken(EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
-const MapPage = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<RootStackParamList, 'Map', 'MyStack'>) => {
-  const [user, setUser] = useState<User | null>(null);
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setUser(user);
-      } else {
-        Alert.alert('Error Accessing User');
-      }
-    });
-  }, []);
+type MapProps = NativeStackScreenProps<AppStackParamList, 'Map'>;
 
-  const map = useRef<MapView>(null);
-
-  const cameraRef = useCallback((node: Camera) => {
-    if (node !== null) {
-      node.setCamera({
-        centerCoordinate: route.params['center'],
-        zoomLevel: 19,
-        pitch: 20,
-        heading: 10,
-      });
-    }
-  }, []);
+const MapPage = ({ navigation, route }: MapProps) => {
+  const {
+    map,
+    camera,
+    selectedLevel,
+    setSelectedLevel,
+    selectedRoomId,
+    setSelectedRoomId,
+  } = useMap();
+  const screenHeight = Dimensions.get('window').height;
 
   const [mapState, setMapState] = useState<Mapbox.MapState | null>(null);
   const [levels, setLevels] = useState<string[]>([]);
   const [buildingFetchLoading, setBuildingFetchLoading] = useState(false);
   const [buildings, setBuildings] = useState<Array<Number>>([]);
-  const [selectedLevel, setSelectedLevel] = useState('2');
-  const [shape, setShape] = useState<FeatureCollection | null>(null);
-  // const [centerCoordinates, setCenterCoordinates] = useState<[number, number]>(
-  //   route.params?.center,
-  // );
-
-  // console.log('center:', route.params['center']);
-
-  // console.log(centerCoordinates);
+  const [shape, setShape] = useState<FeatureCollection | undefined>(
+    defaultGeoJSON as unknown as FeatureCollection,
+  );
+  const [openSettingsModal, setOpenSettingsModal] = useState(false);
   const minZoomLevel = 18.5;
 
-  useEffect(() => {
-    const fetchMapGeoJSON = async () => {
-      const { data, error } = await supabase.rpc(
-        'export_geojson_by_building_ids',
-        {
-          building_ids: buildings,
-        },
-      );
-      console.log(buildings, data);
-      if (error) {
-        console.error(error);
-      } else if (data && data[0]['j']['features']) {
-        setShape(data[0]['j'] as unknown as FeatureCollection);
-      }
-    };
+  const animatedValue = useRef(new Animated.Value(10)).current;
 
+  useEffect(() => {
     if (buildings.length > 0) {
-      fetchMapGeoJSON();
+      (async () => {
+        const { data, error } = await getGeoJSON(buildings);
+        if (data) setShape(data);
+      })();
     } else {
-      setShape(null);
+      setShape(defaultGeoJSON as unknown as FeatureCollection);
     }
   }, [buildings]);
+
+  useEffect(() => {
+    const targetValue = selectedRoomId !== -1 ? screenHeight * 0.22 : 10;
+    Animated.timing(animatedValue, {
+      toValue: targetValue,
+      duration: 250,
+      useNativeDriver: false,
+      easing: Easing.elastic(1),
+    }).start();
+  }, [selectedRoomId]);
 
   const fetchBuildingInScreen = async (state: Mapbox.MapState) => {
     if (state !== mapState) {
@@ -96,11 +88,11 @@ const MapPage = ({
       if (buildingFetchLoading) return;
       setBuildingFetchLoading(true);
 
-      const { data, error } = await supabase.rpc('get_nearby_buildings', {
-        lon: center_lon,
-        lat: center_lat,
-        max_distance: radius,
-      });
+      const { data, error } = await getNearbyBuildings(
+        center_lat,
+        center_lon,
+        radius,
+      );
 
       setBuildingFetchLoading(false);
       setMapState(state);
@@ -125,7 +117,7 @@ const MapPage = ({
       <View style={styles.container}>
         <MapView style={styles.map} ref={map} onMapIdle={fetchBuildingInScreen}>
           <Camera
-            ref={cameraRef}
+            ref={camera}
             zoomLevel={19}
             pitch={20}
             heading={10}
@@ -135,22 +127,36 @@ const MapPage = ({
             selectedLevel={selectedLevel}
             minZoomLevel={minZoomLevel}
             shape={shape}
+            selectedRoomId={selectedRoomId}
+            setSelectedRoomId={setSelectedRoomId}
           />
         </MapView>
       </View>
 
       <View style={styles.searchBar}>
-        <SearchBar navigation={navigation} />
+        <SearchBar
+          navigation={navigation}
+          setOpenSettingsModal={setOpenSettingsModal}
+        />
       </View>
       {levels.length > 0 && (
-        <View style={styles.levelButtons}>
+        <Animated.View style={[styles.levelButtons, { bottom: animatedValue }]}>
           <LevelButtons
             levels={levels}
             selectedLevel={selectedLevel}
             setSelectedLevel={setSelectedLevel}
           />
-        </View>
+        </Animated.View>
       )}
+      <DetailModal
+        selectedRoomId={selectedRoomId}
+        setSelectedRoomId={setSelectedRoomId}
+      />
+      <SettingsModal
+        navigation={navigation}
+        openSettingsModal={openSettingsModal}
+        setOpenSettingsModal={setOpenSettingsModal}
+      />
     </View>
   );
 };
@@ -170,8 +176,7 @@ const styles = StyleSheet.create({
   },
   levelButtons: {
     position: 'absolute',
-    bottom: 10,
-    right: 10,
+    right: '3%',
   },
   searchBar: {
     position: 'absolute',

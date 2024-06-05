@@ -10,50 +10,24 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { defaultBlue, kB2, kB3, kR1 } from '../utils/constant';
-import { supabase } from '../lib/supabase';
-import { NavigationProp } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AppStackParamList } from '../routes/app.route';
+import { useAuth } from '../context/AuthContext';
 
-type ProfileProps = {
-  navigation: NavigationProp<any>;
-};
+type ProfileProps = NativeStackScreenProps<AppStackParamList, 'Profile'>;
 
-const ProfilePage = ({ navigation }: ProfileProps) => {
-  const [email, setEmail] = useState('');
-  const [fullName, setFullName] = useState('');
-
-  async function logout() {
-    await supabase.auth.signOut();
-    navigation.navigate('Welcome');
-  }
-
-  useEffect(() => {
-    const fetchSession = async () => {
-      try {
-        const session = await supabase.auth.getUser();
-        console.log(session);
-        if (session.data.user) {
-          setEmail(session.data.user.email || '');
-          setFullName(session.data.user.user_metadata.full_name || '');
-        }
-      } catch (error) {
-        console.error('Error fetching session');
-      }
-    };
-
-    fetchSession();
-  }, []);
+const ProfilePage = ({ navigation, route }: ProfileProps) => {
+  const { profile, user, signOut } = useAuth();
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <ScrollView>
-        <View style={styles.container}>
+        <View>
           <View
             style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
           >
             <TouchableOpacity
-              onPressIn={() => {
-                navigation.navigate('Search');
-              }}
+              onPressIn={() => {}}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               style={{ marginTop: 30 }}
             >
@@ -61,6 +35,7 @@ const ProfilePage = ({ navigation }: ProfileProps) => {
                 name="account-circle"
                 size={64}
                 color="#1168A7"
+                style={{ backgroundColor: 'white' }}
               />
             </TouchableOpacity>
             <Text style={{ color: '#1168A7', marginBottom: 30 }}>
@@ -69,23 +44,12 @@ const ProfilePage = ({ navigation }: ProfileProps) => {
           </View>
           <View style={styles.field}>
             <Text style={styles.label}>Full Name</Text>
-            <Text style={styles.value}>{fullName}</Text>
+            <Text style={styles.value}>{profile?.full_name}</Text>
           </View>
           <View style={styles.field}>
             <Text style={styles.label}>E-mail</Text>
-            <Text style={styles.value}>{email}</Text>
+            <Text style={styles.value}>{user?.email}</Text>
           </View>
-          <Pressable
-            style={[
-              styles.button,
-              { marginTop: 24, marginBottom: 12, backgroundColor: 'white' },
-            ]}
-            onPress={() => {
-              logout();
-            }}
-          >
-            <Text style={[kB3, { color: defaultBlue }]}>Logout</Text>
-          </Pressable>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -94,6 +58,9 @@ const ProfilePage = ({ navigation }: ProfileProps) => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: 'white',
+    // alignItems: 'center',
     padding: 26,
   },
   label: {
