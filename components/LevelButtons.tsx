@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 
@@ -15,20 +15,28 @@ const LevelButtons = ({
 }: LevelButtonsProps) => {
   const flatList = useRef<FlatList>(null);
 
+  const itemHeight = 30;
+  const maxVisibleItems = 4;
+  const containerHeight =
+    levels.length > maxVisibleItems
+      ? itemHeight * maxVisibleItems + 20 + 40
+      : itemHeight * levels.length + 20;
   return (
-    <View style={styles.container}>
-      <AntDesign
-        name="caretup"
-        size={20}
-        color="darkblue"
-        onPress={() =>
-          flatList.current?.scrollToIndex({ index: 0, animated: true })
-        }
-      />
+    <View style={[styles.container, { height: containerHeight }]}>
+      {levels.length > maxVisibleItems && (
+        <AntDesign
+          name="caretup"
+          size={20}
+          color="#1168A7"
+          onPress={() => {
+            flatList.current?.scrollToIndex({ index: 0, animated: true });
+          }}
+        />
+      )}
       <FlatList
         ref={flatList}
         data={levels}
-        renderItem={({ item, index, separators }) => (
+        renderItem={({ item, index }) => (
           <Pressable
             key={item}
             onPress={() => {
@@ -43,13 +51,19 @@ const LevelButtons = ({
             <Text>{item}</Text>
           </Pressable>
         )}
+        keyExtractor={(item) => item}
+        showsVerticalScrollIndicator={false}
       />
-      <AntDesign
-        name="caretdown"
-        size={20}
-        color="darkblue"
-        onPress={() => flatList.current?.scrollToEnd({ animated: true })}
-      />
+      {levels.length > maxVisibleItems && (
+        <AntDesign
+          name="caretdown"
+          size={20}
+          color="#1168A7"
+          onPress={() => {
+            flatList.current?.scrollToEnd({ animated: true });
+          }}
+        />
+      )}
     </View>
   );
 };
@@ -59,33 +73,24 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingHorizontal: 5,
     paddingVertical: 10,
-    height: 200,
     borderRadius: 50,
-    borderColor: 'darkblue',
-    borderWidth: 1,
-
-    flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
 
-    gap: 5,
+  listContainer: {
+    paddingBottom: 10,
   },
 
   item: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-
     fontSize: 10,
     fontWeight: 'bold',
-
     width: 30,
     height: 30,
     borderRadius: 100,
-    // backgroundColor: 'lightgrey',
-
-    // marginBottom: 2,
   },
 });
 
