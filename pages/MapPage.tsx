@@ -134,9 +134,11 @@ const MapPage = ({ navigation, route }: MapProps) => {
         const newBuildings = data.map((b: any) => b.gid);
         if (newBuildings !== buildings) {
           setBuildings(newBuildings);
-          setLevels([
-            ...new Set(data.flatMap((item: any) => item.level_order)),
-          ] as string[]);
+          setLevels(
+            [
+              ...new Set(data.flatMap((item: any) => item.level_order)),
+            ].sort() as string[],
+          );
         }
       }
     }
