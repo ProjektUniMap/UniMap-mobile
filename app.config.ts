@@ -13,6 +13,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     'expo-secure-store',
+    [
+      'expo-location',
+      {
+        locationAlwaysAndWhenInUsePermission:
+          'Allow UniMap to use your location.',
+        isAndroidBackgroundLocationEnabled: true,
+      },
+    ],
   ],
   extra: {
     eas: {

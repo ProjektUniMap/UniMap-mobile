@@ -7,8 +7,9 @@ interface MapContextProps {
   camera: React.RefObject<CameraRef>;
   moveCamera: (
     [lon, lat]: [number, number],
-    level: string,
-    roomId: number,
+    level?: string,
+    roomId?: number,
+    zoomLevel?: number,
   ) => void;
   selectedLevel: string;
   setSelectedLevel: React.Dispatch<React.SetStateAction<string>>;
@@ -36,18 +37,19 @@ export const MapProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const moveCamera = (
     [lon, lat]: [number, number],
-    level: string,
-    roomId: number,
+    level?: string,
+    roomId?: number,
+    zoomLevel?: number,
   ) => {
     if (camera.current) console.log('HEY');
     camera.current?.setCamera({
       centerCoordinate: [lon, lat],
       animationDuration: 2000,
       animationMode: 'easeTo',
-      zoomLevel: 20,
+      zoomLevel: zoomLevel || 20,
     });
-    setSelectedLevel(level);
-    setSelectedRoomId(roomId);
+    if (level) setSelectedLevel(level);
+    if (roomId) setSelectedRoomId(roomId);
   };
 
   return (

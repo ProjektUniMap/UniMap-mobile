@@ -9,7 +9,13 @@ import {
   Easing,
   Settings,
 } from 'react-native';
-import Mapbox, { MapView, Camera } from '@rnmapbox/maps';
+import Mapbox, {
+  MapView,
+  Camera,
+  Location,
+  UserLocation,
+  LocationPuck,
+} from '@rnmapbox/maps';
 import MapSource from './../components/MapSource';
 import { FeatureCollection } from 'geojson';
 import LevelButtons from './../components/LevelButtons';
@@ -23,6 +29,8 @@ import { getGeoJSON, getNearbyBuildings } from '../api/map.api';
 import DetailModal from '../components/DetailModal';
 import SettingsModal from '../components/SettingsModal';
 
+import * as ExpoLocation from 'expo-location';
+
 const EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN = process.env
   .EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
 Mapbox.setAccessToken(EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN);
@@ -33,6 +41,7 @@ const MapPage = ({ navigation, route }: MapProps) => {
   const {
     map,
     camera,
+    moveCamera,
     selectedLevel,
     setSelectedLevel,
     selectedRoomId,
@@ -52,6 +61,25 @@ const MapPage = ({ navigation, route }: MapProps) => {
 
   const animatedValue = useRef(new Animated.Value(10)).current;
 
+  // Ask permission for location
+  useEffect(() => {
+    (async () => {
+      let { status } = await ExpoLocation.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        // setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await ExpoLocation.getCurrentPositionAsync({});
+      moveCamera(
+        [location.coords.longitude, location.coords.latitude],
+        '0',
+        -1,
+        19,
+      );
+    })();
+  }, []);
+
   useEffect(() => {
     if (buildings.length > 0) {
       (async () => {
@@ -60,6 +88,8 @@ const MapPage = ({ navigation, route }: MapProps) => {
       })();
     } else {
       setShape(defaultGeoJSON as unknown as FeatureCollection);
+      setSelectedLevel('0');
+      setLevels([]);
     }
   }, [buildings]);
 
@@ -115,7 +145,15 @@ const MapPage = ({ navigation, route }: MapProps) => {
   return (
     <View style={styles.page}>
       <View style={styles.container}>
-        <MapView style={styles.map} ref={map} onMapIdle={fetchBuildingInScreen}>
+        <MapView
+          style={styles.map}
+          ref={map}
+          onMapIdle={fetchBuildingInScreen}
+          scaleBarEnabled={false}
+          logoEnabled={false}
+          attributionEnabled={false}
+        >
+          <LocationPuck />
           <Camera
             ref={camera}
             zoomLevel={19}
