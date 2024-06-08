@@ -62,6 +62,7 @@ const DetailModal = ({
     (async () => {
       const { data } = await getRoomById(selectedRoomId as number);
       if (data) setDetails(data);
+      console.log(selectedRoomId);
     })();
 
     (async () => {

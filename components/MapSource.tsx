@@ -33,6 +33,7 @@ const MapSource = ({
           return;
         }
         setSelectedRoomId(p.features[0].properties?.id as Number);
+        console.log(p.features[0].properties);
       }}
     >
       <FillLayer
@@ -65,7 +66,7 @@ const MapSource = ({
         id="indoor-text"
         style={{
           symbolPlacement: 'point',
-          textField: ['get', 'name'],
+          textField: ['get', 'display_name'],
           textSize: 8,
         }}
         filter={['==', 'level', selectedLevel]}
