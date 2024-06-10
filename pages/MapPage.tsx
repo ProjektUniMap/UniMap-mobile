@@ -105,12 +105,13 @@ const MapPage = ({ navigation, route }: MapProps) => {
 
   const fetchBuildingInScreen = async (state: Mapbox.MapState) => {
     if (state !== mapState) {
-      const radius = measure(
-        state.properties.bounds.ne[0],
-        state.properties.bounds.ne[1],
-        state.properties.bounds.sw[0],
-        state.properties.bounds.sw[1],
-      );
+      const radius =
+        measure(
+          state.properties.bounds.ne[0],
+          state.properties.bounds.ne[1],
+          state.properties.bounds.sw[0],
+          state.properties.bounds.sw[1],
+        ) + 50;
 
       const center_lat = state.properties.center[0];
       const center_lon = state.properties.center[1];
@@ -133,6 +134,7 @@ const MapPage = ({ navigation, route }: MapProps) => {
       } else if (data) {
         const newBuildings = data.map((b: any) => b.gid);
         if (newBuildings !== buildings) {
+          console.log(newBuildings);
           setBuildings(newBuildings);
           setLevels(
             [
