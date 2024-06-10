@@ -25,7 +25,7 @@ const SettingsModal = ({
   openSettingsModal,
   setOpenSettingsModal,
 }: SettingsModalProps) => {
-  const { profile, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
 
   const handleClose = () => {
     setOpenSettingsModal(false);
@@ -52,8 +52,10 @@ const SettingsModal = ({
                     style={{ backgroundColor: 'white' }}
                   />
                   <View>
-                    <Text style={styles.profileTitle}>Frendy Sanusi</Text>
-                    <Text style={styles.profileSubtitle}>frendy@gmail.com</Text>
+                    <Text style={styles.profileTitle}>
+                      {profile?.full_name}
+                    </Text>
+                    <Text style={styles.profileSubtitle}>{user?.email}</Text>
                   </View>
                 </View>
                 <MaterialCommunityIcons
